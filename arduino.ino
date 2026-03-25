@@ -21,12 +21,11 @@
 #include <pins_arduino.h>
 #include "serial.h"
 
-#define NEO_PIN   6   // Pin where I2C is setup
-#define NUMPIXELS 13  // One ring and then an additional
+#define NEO_PIN   6
+#define NUMPIXELS 12
 
 Adafruit_NeoPixel pixels(NUMPIXELS, NEO_PIN, NEO_GRB + NEO_KHZ800);
 NeoPixelSegment* ring;
-NeoPixelSegment* single;
 
 unsigned previousMs = -1;
 unsigned buttonTriggerMs = -1;
@@ -38,7 +37,6 @@ bool tick = false;
 bool buttonPressed = false;
 
 FireState fireState;
-PulseState pulseState;
 PulseState ringPulseState;
 ProgressState progressState;
 
@@ -47,9 +45,8 @@ String ringAnimation = "fire";
 SerialState serialState = SerialState();
 
 void setup() {
-  pixels.begin(); // init NeoPixel array object (REQUIRED)
+  pixels.begin();
   ring = new NeoPixelSegment(&pixels, 0, 12);
-  single = new NeoPixelSegment(&pixels, 12, 1);
 
   pinMode(2, INPUT);
   attachInterrupt(digitalPinToInterrupt(2), handleButtonPressIsr, FALLING);
@@ -68,19 +65,12 @@ void setup() {
 void setupAnimations() {
   fireState = FireState();
 
-  pulseState = PulseState();
-  pulseState.max = 128;
-  pulseState.min = 32;
-  pulseState.increment = 5;
-  pulseState.rate = 6;
-
   ringPulseState = PulseState();
   ringPulseState.rate = 10;
 
   progressState = ProgressState();
   progressState.rate = 3;
 
-  single->fill("blue");
   ring->fill("blue");
 }
 
@@ -95,20 +85,15 @@ void loop() {
     tick = false;
   }
 
-  // Check button presses
   if(buttonPressed) {
     buttonPressed = false;
-    // single->fill(getRandomColor().name);
-    // single->setAnimating(!single->getAnimating());
-    // ring->setAnimating(!ring->getAnimating());
+    ring->fill("purple");
+    ringAnimation = "pulse";
   }
 
   // Running every 10ms
   if(tick) {
-    // ring->animate(pulse, iterations, ringPulseState);
     runRingAnimation(ringAnimation);
-    // ring->animate(progress, iterations, progressState);
-    single->animate(pulse, iterations, pulseState);
   } 
 
   checkSerial(serialState);
@@ -136,15 +121,12 @@ void runRingAnimation(String animateCommand) {
 }
 
 void processCommands(String commands[], int numCommands) {
-  if(commands[0].equalsIgnoreCase("onair")) {
-    single->fill(commands[1]);
-    single->show();
-  } else if(commands[0].equalsIgnoreCase("ring")) {
+  if(commands[0].equalsIgnoreCase("ring")) {
     ring->fill(commands[1]);
     if(numCommands == 3) {
       ringAnimation = commands[2];
     }
-    single->show();
+    ring->show();
   }
 }
 

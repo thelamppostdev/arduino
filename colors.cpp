@@ -8,7 +8,7 @@ extern RgbColor colors[] = {
   RgbColor("yellow", 255, 255, 0),    
   RgbColor("lime", 128, 255, 0),
   RgbColor("green", 0, 255, 0),      
-  RgbColor("teal", 255, 128, 0),    
+  RgbColor("teal", 0, 128, 128),    
   RgbColor("marine", 0, 255, 255),    
   RgbColor("blue", 0, 0, 255),      
   RgbColor("purple", 127, 0, 255),    
