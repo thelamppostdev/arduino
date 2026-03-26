@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { ArduinoManager } from './arduino.js';
 import { createRoutes } from './routes.js';
+import { SystemMonitor } from './monitor.js';
 import { logger } from './logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,6 +18,7 @@ app.use(express.json());
 
 // Arduino connection
 const arduino = new ArduinoManager();
+const monitor = new SystemMonitor(arduino);
 
 // API routes
 app.use('/api', createRoutes(arduino));
@@ -52,6 +54,19 @@ wss.on('connection', (ws) => {
         let command = `ring-${msg.color}`;
         if (msg.animation) command += `-${msg.animation}`;
         arduino.write(command);
+      } else if (msg.type === 'monitor') {
+        if (msg.action === 'start') {
+          monitor.start((stats) => {
+            const payload = JSON.stringify({ type: 'monitor-stats', ...stats });
+            for (const client of wss.clients) {
+              if (client.readyState === WebSocket.OPEN) {
+                client.send(payload);
+              }
+            }
+          });
+        } else if (msg.action === 'stop') {
+          monitor.stop();
+        }
       }
     } catch {
       // ignore malformed messages
@@ -81,6 +96,7 @@ async function start() {
 // Graceful shutdown
 async function shutdown() {
   logger.info('Shutting down...');
+  monitor.stop();
   wss.close();
   await arduino.disconnect();
   server.close();

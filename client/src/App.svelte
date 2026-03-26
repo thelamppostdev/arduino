@@ -2,6 +2,7 @@
   import StatusBar from './lib/StatusBar.svelte';
   import ColorPicker from './lib/ColorPicker.svelte';
   import AnimationPicker from './lib/AnimationPicker.svelte';
+  import Monitor from './lib/Monitor.svelte';
   import { sendRingCommand } from './api';
 
   let selectedColor = 'blue';
@@ -24,6 +25,10 @@
   <ColorPicker selected={selectedColor} on:select={onColorSelect} />
   <div class="spacer"></div>
   <AnimationPicker selected={selectedAnimation} on:select={onAnimationSelect} />
+  {#if selectedAnimation === 'monitor'}
+    <div class="spacer"></div>
+    <Monitor />
+  {/if}
 </main>
 
 <style>

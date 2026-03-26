@@ -119,6 +119,8 @@ void runRingAnimation(String animateCommand) {
     ring->animate(pulse, iterations, ringPulseState);
   } else if(animateCommand.equalsIgnoreCase("progress")) {
     ring->animate(progress, iterations, progressState);
+  } else if(animateCommand.equalsIgnoreCase("monitor")) {
+    // No-op: level is set directly by serial command
   }
 }
 
@@ -127,6 +129,24 @@ void processCommands(String commands[], int numCommands) {
     ring->fill(commands[1]);
     if(numCommands == 3) {
       ringAnimation = commands[2];
+    }
+    ring->show();
+  } else if(commands[0].equalsIgnoreCase("levels") && numCommands >= 3) {
+    int cpuLevel = constrain(commands[1].toInt(), 0, 12);
+    int memLevel = constrain(commands[2].toInt(), 0, 12);
+    for(int i = 0; i < 12; i++) {
+      bool isCpu = i < cpuLevel;
+      bool isMem = i < memLevel;
+      if(isCpu && isMem) {
+        ring->setPixelColor(i, RgbColor("", 128, 0, 255)); // purple
+      } else if(isCpu) {
+        ring->setPixelColor(i, RgbColor("", 255, 0, 0));   // red
+      } else if(isMem) {
+        ring->setPixelColor(i, RgbColor("", 0, 0, 255));   // blue
+      } else {
+        ring->setPixelColor(i, RgbColor("", 0, 0, 0));     // off
+      }
+      ring->setPixelBrightness(i, (isCpu || isMem) ? 8 : 0);
     }
     ring->show();
   }

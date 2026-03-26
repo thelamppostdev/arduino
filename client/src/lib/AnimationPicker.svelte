@@ -10,6 +10,7 @@
     { name: 'bluefire', icon: '🧊', label: 'Blue Fire' },
     { name: 'pulse', icon: '💜', label: 'Pulse' },
     { name: 'progress', icon: '🔄', label: 'Progress' },
+    { name: 'monitor', icon: '📊', label: 'Monitor' },
   ];
 
   function selectAnimation(name: string) {
@@ -44,12 +45,12 @@
   }
 
   .buttons {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
 
   .anim-btn {
-    flex: 1;
     padding: 16px;
     border: 2px solid #333;
     border-radius: 12px;
