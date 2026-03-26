@@ -12,6 +12,17 @@ RgbColor getFireColor() {
   return RgbColor("", r, g, 0);
 }
 
+RgbColor getBlueFireColor() {
+  uint8_t b = random(180, 255);
+  uint8_t g = random(0, 64);
+
+  if (g > b) {
+    g = b;
+  }
+
+  return RgbColor("", 0, g, b);
+}
+
 void fire(NeoPixelSegment& segment, unsigned long ticks, FireState& state) {
   if(ticks % state.rate == 0) {
       for (int i = 0; i < segment.getLength(); i++) {
@@ -19,6 +30,16 @@ void fire(NeoPixelSegment& segment, unsigned long ticks, FireState& state) {
         segment.setPixelBrightness(i, random(4, 10));
       }
       // segment.setBrightness(random(4, 10));
+      segment.show();
+  }
+}
+
+void blueFire(NeoPixelSegment& segment, unsigned long ticks, FireState& state) {
+  if(ticks % state.rate == 0) {
+      for (int i = 0; i < segment.getLength(); i++) {
+        segment.setPixelColor(i, getBlueFireColor());
+        segment.setPixelBrightness(i, random(4, 10));
+      }
       segment.show();
   }
 }

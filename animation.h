@@ -26,6 +26,7 @@ struct Animation {
 };
 
 void fire(NeoPixelSegment& segment, unsigned long ticks, FireState& state);
+void blueFire(NeoPixelSegment& segment, unsigned long ticks, FireState& state);
 void pulse(NeoPixelSegment& segment, unsigned long ticks, PulseState& state);
 void progress(NeoPixelSegment& segment, unsigned long ticks, ProgressState& state);
 

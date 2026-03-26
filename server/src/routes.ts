@@ -16,7 +16,7 @@ const COLORS = [
   { name: 'white', rgb: '#FFFFFF' },
 ];
 
-const ANIMATIONS = ['fire', 'pulse', 'progress'];
+const ANIMATIONS = ['fire', 'bluefire', 'pulse', 'progress'];
 
 export function createRoutes(arduino: ArduinoManager): Router {
   const router = Router();

@@ -7,6 +7,7 @@
 
   const animations = [
     { name: 'fire', icon: '🔥', label: 'Fire' },
+    { name: 'bluefire', icon: '🧊', label: 'Blue Fire' },
     { name: 'pulse', icon: '💜', label: 'Pulse' },
     { name: 'progress', icon: '🔄', label: 'Progress' },
   ];

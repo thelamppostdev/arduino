@@ -113,6 +113,8 @@ void loop() {
 void runRingAnimation(String animateCommand) {
   if(animateCommand.equalsIgnoreCase("fire")) {
     ring->animate(fire, iterations, fireState);
+  } else if(animateCommand.equalsIgnoreCase("bluefire")) {
+    ring->animate(blueFire, iterations, fireState);
   } else if(animateCommand.equalsIgnoreCase("pulse")) {
     ring->animate(pulse, iterations, ringPulseState);
   } else if(animateCommand.equalsIgnoreCase("progress")) {
