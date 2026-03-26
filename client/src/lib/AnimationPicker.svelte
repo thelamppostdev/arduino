@@ -8,6 +8,9 @@
   const animations = [
     { name: 'fire', icon: '🔥', label: 'Fire' },
     { name: 'bluefire', icon: '🧊', label: 'Blue Fire' },
+    { name: 'reactor', icon: '⚡', label: 'Reactor' },
+    { name: 'aurora', icon: '🌌', label: 'Aurora' },
+    { name: 'fireworks', icon: '🎆', label: 'Fireworks' },
     { name: 'pulse', icon: '💜', label: 'Pulse' },
     { name: 'progress', icon: '🔄', label: 'Progress' },
     { name: 'monitor', icon: '📊', label: 'Monitor' },

@@ -8,6 +8,7 @@
   let memory = 0;
   let cpuLevel = 0;
   let memLevel = 0;
+  let pulseSpeed = 60;
   let ws: WebSocket;
 
   onMount(() => {
@@ -107,6 +108,12 @@
     </div>
   </div>
 
+  <div class="slider-row">
+    <label>Pulse: {pulseSpeed}</label>
+    <input type="range" min="10" max="200" bind:value={pulseSpeed}
+      on:input={() => send({ type: 'monitor-pulse', speed: pulseSpeed })} />
+  </div>
+
   <div class="controls">
     {#if running}
       <button class="btn stop-btn" on:click={stop}>Stop</button>
@@ -179,5 +186,23 @@
 
   .stop-btn {
     border-color: #FF4444;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .slider-row label {
+    width: 80px;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  .slider-row input[type="range"] {
+    flex: 1;
+    accent-color: #8000FF;
   }
 </style>

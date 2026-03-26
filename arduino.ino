@@ -39,8 +39,12 @@ bool buttonPressed = false;
 FireState fireState;
 PulseState ringPulseState;
 ProgressState progressState;
+FireworkState fireworkState;
+AuroraState auroraState;
+ArcReactorState arcReactorState;
 
 String ringAnimation = "fire";
+int monitorPulseSpeed = 60;  // pulse period in ticks (lower = faster)
 
 SerialState serialState = SerialState();
 
@@ -119,8 +123,27 @@ void runRingAnimation(String animateCommand) {
     ring->animate(pulse, iterations, ringPulseState);
   } else if(animateCommand.equalsIgnoreCase("progress")) {
     ring->animate(progress, iterations, progressState);
+  } else if(animateCommand.equalsIgnoreCase("reactor")) {
+    ring->animate(arcReactorAnim, iterations, arcReactorState);
+  } else if(animateCommand.equalsIgnoreCase("aurora")) {
+    ring->animate(aurora, iterations, auroraState);
+  } else if(animateCommand.equalsIgnoreCase("fireworks")) {
+    ring->animate(fireworks, iterations, fireworkState);
   } else if(animateCommand.equalsIgnoreCase("monitor")) {
-    // No-op: level is set directly by serial command
+    // Subtle pulse — the levels command sets color to black for off LEDs,
+    // so pulsing brightness on all LEDs only affects lit ones visually
+    if(iterations % 4 == 0) {
+      int half = monitorPulseSpeed / 2;
+      int phase = iterations % monitorPulseSpeed;
+      int bright;
+      if(phase < half) {
+        bright = 6 + (phase * 6 / half);
+      } else {
+        bright = 12 - ((phase - half) * 6 / half);
+      }
+      ring->setBrightness(bright);
+      ring->show();
+    }
   }
 }
 
@@ -149,6 +172,19 @@ void processCommands(String commands[], int numCommands) {
       ring->setPixelBrightness(i, (isCpu || isMem) ? 8 : 0);
     }
     ring->show();
+  } else if(commands[0].equalsIgnoreCase("rrestart")) {
+    arcReactorState = ArcReactorState();
+    ringAnimation = "reactor";
+  } else if(commands[0].equalsIgnoreCase("rconfig") && numCommands >= 5) {
+    arcReactorState.maxBright = constrain(commands[1].toInt(), 5, 30);
+    arcReactorState.minBright = constrain(commands[2].toInt(), 1, arcReactorState.maxBright);
+    arcReactorState.spinRate = constrain(commands[3].toInt(), 1, 10);
+    arcReactorState.initSpinRate = constrain(commands[4].toInt(), 2, 10);
+  } else if(commands[0].equalsIgnoreCase("mpulse") && numCommands >= 2) {
+    monitorPulseSpeed = constrain(commands[1].toInt(), 10, 200);
+  } else if(commands[0].equalsIgnoreCase("abright") && numCommands >= 3) {
+    auroraState.minBright = constrain(commands[1].toInt(), 1, 30);
+    auroraState.maxBright = constrain(commands[2].toInt(), auroraState.minBright, 30);
   }
 }
 

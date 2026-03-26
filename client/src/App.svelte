@@ -3,6 +3,8 @@
   import ColorPicker from './lib/ColorPicker.svelte';
   import AnimationPicker from './lib/AnimationPicker.svelte';
   import Monitor from './lib/Monitor.svelte';
+  import AuroraControls from './lib/AuroraControls.svelte';
+  import ReactorControls from './lib/ReactorControls.svelte';
   import { sendRingCommand } from './api';
 
   let selectedColor = 'blue';
@@ -25,6 +27,14 @@
   <ColorPicker selected={selectedColor} on:select={onColorSelect} />
   <div class="spacer"></div>
   <AnimationPicker selected={selectedAnimation} on:select={onAnimationSelect} />
+  {#if selectedAnimation === 'reactor'}
+    <div class="spacer"></div>
+    <ReactorControls />
+  {/if}
+  {#if selectedAnimation === 'aurora'}
+    <div class="spacer"></div>
+    <AuroraControls />
+  {/if}
   {#if selectedAnimation === 'monitor'}
     <div class="spacer"></div>
     <Monitor />

@@ -54,6 +54,21 @@ wss.on('connection', (ws) => {
         let command = `ring-${msg.color}`;
         if (msg.animation) command += `-${msg.animation}`;
         arduino.write(command);
+      } else if (msg.type === 'monitor-pulse') {
+        const speed = Math.max(10, Math.min(200, msg.speed || 60));
+        arduino.write(`mpulse-${speed}`);
+      } else if (msg.type === 'reactor-restart') {
+        arduino.write('rrestart');
+      } else if (msg.type === 'reactor-config') {
+        const maxB = Math.max(5, Math.min(30, msg.maxBright || 18));
+        const minB = Math.max(1, Math.min(maxB, msg.minBright || 8));
+        const spin = Math.max(1, Math.min(10, msg.spinRate || 1));
+        const initSpin = Math.max(2, Math.min(10, msg.initSpinRate || 6));
+        arduino.write(`rconfig-${maxB}-${minB}-${spin}-${initSpin}`);
+      } else if (msg.type === 'aurora-bright') {
+        const min = Math.max(1, Math.min(30, msg.min || 6));
+        const max = Math.max(min, Math.min(30, msg.max || 20));
+        arduino.write(`abright-${min}-${max}`);
       } else if (msg.type === 'monitor') {
         if (msg.action === 'start') {
           monitor.start((stats) => {
