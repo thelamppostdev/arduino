@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { ArduinoManager } from './arduino.js';
 import { createRoutes } from './routes.js';
 import { SystemMonitor } from './monitor.js';
+import { PRMonitor } from './pr-monitor.js';
 import { logger } from './logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,7 @@ app.use(express.json());
 // Arduino connection
 const arduino = new ArduinoManager();
 const monitor = new SystemMonitor(arduino);
+const prMonitor = new PRMonitor(arduino);
 
 // API routes
 app.use('/api', createRoutes(arduino));
@@ -69,6 +71,26 @@ wss.on('connection', (ws) => {
         const min = Math.max(1, Math.min(30, msg.min || 6));
         const max = Math.max(min, Math.min(30, msg.max || 20));
         arduino.write(`abright-${min}-${max}`);
+      } else if (msg.type === 'pr-repos') {
+        const repos = PRMonitor.listRepos(msg.query || '');
+        ws.send(JSON.stringify({ type: 'pr-repos', repos }));
+      } else if (msg.type === 'pr-list') {
+        const prs = PRMonitor.listPRs(msg.repo || '');
+        ws.send(JSON.stringify({ type: 'pr-list', prs }));
+      } else if (msg.type === 'pr-interval') {
+        prMonitor.setPollInterval(msg.interval || 15);
+      } else if (msg.type === 'pr-watch') {
+        const interval = Math.max(5, Math.min(60, msg.interval || 15));
+        prMonitor.start(msg.repo, msg.pr, interval, (checks) => {
+          const payload = JSON.stringify({ type: 'pr-checks', checks });
+          for (const client of wss.clients) {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(payload);
+            }
+          }
+        });
+      } else if (msg.type === 'pr-stop') {
+        prMonitor.stop();
       } else if (msg.type === 'monitor') {
         if (msg.action === 'start') {
           monitor.start((stats) => {
@@ -112,6 +134,7 @@ async function start() {
 async function shutdown() {
   logger.info('Shutting down...');
   monitor.stop();
+  prMonitor.stop();
   wss.close();
   await arduino.disconnect();
   server.close();

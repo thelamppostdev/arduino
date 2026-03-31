@@ -42,6 +42,8 @@ ProgressState progressState;
 FireworkState fireworkState;
 AuroraState auroraState;
 ArcReactorState arcReactorState;
+CometState cometState;
+ChecksState checksState;
 
 String ringAnimation = "fire";
 int monitorPulseSpeed = 60;  // pulse period in ticks (lower = faster)
@@ -52,8 +54,9 @@ void setup() {
   pixels.begin();
   ring = new NeoPixelSegment(&pixels, 0, 12);
 
-  pinMode(2, INPUT);
-  attachInterrupt(digitalPinToInterrupt(2), handleButtonPressIsr, FALLING);
+  // Button disabled — floating pin causes spurious interrupts
+  // pinMode(2, INPUT);
+  // attachInterrupt(digitalPinToInterrupt(2), handleButtonPressIsr, FALLING);
 
   initSerialState(serialState);
   Serial.begin(230400);
@@ -129,6 +132,10 @@ void runRingAnimation(String animateCommand) {
     ring->animate(aurora, iterations, auroraState);
   } else if(animateCommand.equalsIgnoreCase("fireworks")) {
     ring->animate(fireworks, iterations, fireworkState);
+  } else if(animateCommand.equalsIgnoreCase("comet")) {
+    ring->animate(comet, iterations, cometState);
+  } else if(animateCommand.equalsIgnoreCase("checks")) {
+    ring->animate(checksAnim, iterations, checksState);
   } else if(animateCommand.equalsIgnoreCase("monitor")) {
     // Subtle pulse — the levels command sets color to black for off LEDs,
     // so pulsing brightness on all LEDs only affects lit ones visually
@@ -185,6 +192,12 @@ void processCommands(String commands[], int numCommands) {
   } else if(commands[0].equalsIgnoreCase("abright") && numCommands >= 3) {
     auroraState.minBright = constrain(commands[1].toInt(), 1, 30);
     auroraState.maxBright = constrain(commands[2].toInt(), auroraState.minBright, 30);
+  } else if(commands[0].equalsIgnoreCase("checks") && numCommands >= 3) {
+    checksState.numChecks = constrain(commands[1].toInt(), 0, 12);
+    String statuses = commands[2];
+    for(int i = 0; i < 12; i++) {
+      checksState.statuses[i] = (i < (int)statuses.length()) ? statuses.charAt(i) : 0;
+    }
   }
 }
 

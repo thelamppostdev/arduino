@@ -41,77 +41,87 @@
   $: spinDisplay = 11 - spinRate;
 </script>
 
-<div class="reactor-controls">
-  <h2>Reactor Controls</h2>
-  <button class="btn restart-btn" on:click={restart} disabled={!connected}>
+<div class="controls">
+  <h2>Reactor</h2>
+  <button class="restart-btn" on:click={restart} disabled={!connected}>
     Restart Sequence
   </button>
   <div class="slider-row">
-    <label>Min: {minBright}</label>
+    <label>Min <span class="val">{minBright}</span></label>
     <input type="range" min="1" max="30" bind:value={minBright} on:input={onMinChange} />
   </div>
   <div class="slider-row">
-    <label>Max: {maxBright}</label>
+    <label>Max <span class="val">{maxBright}</span></label>
     <input type="range" min="5" max="30" bind:value={maxBright} on:input={onMaxChange} />
   </div>
   <div class="slider-row">
-    <label>Spin: {spinDisplay}</label>
+    <label>Spin <span class="val">{spinDisplay}</span></label>
     <input type="range" min="1" max="10" bind:value={spinRate} on:input={send}
       style="direction: rtl;" />
   </div>
   <div class="slider-row">
-    <label>Start: {11 - initSpinRate}</label>
+    <label>Start <span class="val">{11 - initSpinRate}</span></label>
     <input type="range" min="2" max="10" bind:value={initSpinRate} on:input={send}
       style="direction: rtl;" />
   </div>
 </div>
 
 <style>
-  .reactor-controls h2 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    color: #aaa;
+  .controls h2 {
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: #555;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
   }
 
   .restart-btn {
     width: 100%;
-    padding: 14px;
-    border: 2px solid #00FFFF;
-    border-radius: 12px;
-    background: #1a1a2e;
-    color: #00FFFF;
-    font-size: 14px;
+    padding: 10px;
+    border: 1px solid #00CCCC;
+    border-radius: 8px;
+    background: #0a0a14;
+    color: #00DDDD;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
-    margin-bottom: 16px;
-    transition: background 0.15s;
+    margin-bottom: 12px;
+    transition: background 0.12s;
   }
 
   .restart-btn:hover {
-    background: #252545;
+    background: #161630;
   }
 
   .restart-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
     cursor: not-allowed;
   }
 
   .slider-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 6px;
   }
 
   label {
-    width: 70px;
-    font-size: 14px;
+    width: 60px;
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .val {
     color: #ccc;
+    font-variant-numeric: tabular-nums;
   }
 
   input[type="range"] {
     flex: 1;
-    accent-color: #00FFFF;
+    accent-color: #00CCCC;
+    height: 4px;
   }
 </style>

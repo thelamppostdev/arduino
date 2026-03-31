@@ -33,59 +33,47 @@
       <button
         class="swatch"
         class:active={selected === color.name}
-        style="background-color: {color.rgb}"
+        style="--color: {color.rgb}"
         on:click={() => selectColor(color.name)}
         title={color.name}
-      >
-        <span class="name">{color.name}</span>
-      </button>
+      ></button>
     {/each}
   </div>
 </div>
 
 <style>
   .section h2 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    color: #aaa;
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: #555;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
   }
 
   .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .swatch {
-    aspect-ratio: 1;
-    border: 3px solid transparent;
-    border-radius: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: var(--color);
     cursor: pointer;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 6px;
-    transition: transform 0.15s, border-color 0.15s;
-    min-height: 70px;
+    padding: 0;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
   }
 
   .swatch:hover {
-    transform: scale(1.08);
+    transform: scale(1.15);
   }
 
   .swatch.active {
     border-color: #fff;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-  }
-
-  .name {
-    font-size: 11px;
-    color: #000;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-transform: capitalize;
+    box-shadow: 0 0 10px var(--color), 0 0 4px rgba(255, 255, 255, 0.3);
   }
 </style>

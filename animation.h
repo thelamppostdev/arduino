@@ -56,6 +56,24 @@ struct AuroraState {
   int maxBright = 20;
 };
 
+struct CometState {
+  int rate = 3;
+  int position = 0;
+  int phase = 0;        // 0=idle, 1=moving, 2=fade
+  int tailLength = 5;
+  int idleTimer = 5;
+  int fadeStep = 0;
+  int lapCount = 0;     // tracks how far through the lap
+};
+
+struct ChecksState {
+  int rate = 2;
+  int numChecks = 0;
+  char statuses[12] = {};   // S=success, F=failure, P=pending, Q=queued
+  int pulsePhase = 4;
+  bool pulseRising = true;
+};
+
 struct Animation {
   void (*func);
   void* state;
@@ -68,5 +86,7 @@ void progress(NeoPixelSegment& segment, unsigned long ticks, ProgressState& stat
 void fireworks(NeoPixelSegment& segment, unsigned long ticks, FireworkState& state);
 void aurora(NeoPixelSegment& segment, unsigned long ticks, AuroraState& state);
 void arcReactorAnim(NeoPixelSegment& segment, unsigned long ticks, ArcReactorState& state);
+void comet(NeoPixelSegment& segment, unsigned long ticks, CometState& state);
+void checksAnim(NeoPixelSegment& segment, unsigned long ticks, ChecksState& state);
 
 #endif

@@ -264,6 +264,137 @@ void aurora(NeoPixelSegment& segment, unsigned long ticks, AuroraState& state) {
   segment.show();
 }
 
+void comet(NeoPixelSegment& segment, unsigned long ticks, CometState& state) {
+  if(ticks % state.rate != 0) return;
+
+  int len = segment.getLength();
+
+  if(state.phase == 0) {
+    // Idle — all dark, waiting for next comet
+    for(int i = 0; i < len; i++) {
+      segment.setPixelBrightness(i, 0);
+    }
+    segment.show();
+    state.idleTimer--;
+    if(state.idleTimer <= 0) {
+      state.phase = 1;
+      state.position = 0;
+      state.lapCount = 0;
+    }
+    return;
+  }
+
+  if(state.phase == 1) {
+    // Moving — bright head with fading tail
+    uint8_t tailBright[] = {20, 14, 10, 6, 3};
+
+    for(int i = 0; i < len; i++) {
+      segment.setPixelBrightness(i, 0);
+    }
+
+    for(int t = 0; t < state.tailLength; t++) {
+      int idx = (state.position - t + len) % len;
+      // Only light LEDs the comet has actually reached
+      if(t <= state.lapCount) {
+        segment.setPixelBrightness(idx, tailBright[t]);
+      }
+    }
+
+    state.position = (state.position + 1) % len;
+    state.lapCount++;
+
+    if(state.lapCount >= len) {
+      state.phase = 2;
+      state.fadeStep = 5;
+    }
+    segment.show();
+    return;
+  }
+
+  if(state.phase == 2) {
+    // Fade — tail fades out after head completes a lap
+    uint8_t tailBright[] = {20, 14, 10, 6, 3};
+
+    for(int i = 0; i < len; i++) {
+      segment.setPixelBrightness(i, 0);
+    }
+
+    // Draw shrinking tail from where head stopped
+    for(int t = 0; t < state.fadeStep; t++) {
+      int idx = (state.position - t + len) % len;
+      int bright = tailBright[state.tailLength - state.fadeStep + t];
+      segment.setPixelBrightness(idx, bright);
+    }
+
+    state.fadeStep--;
+    state.position = (state.position + 1) % len;
+
+    if(state.fadeStep <= 0) {
+      state.phase = 0;
+      state.idleTimer = random(10, 30);
+    }
+    segment.show();
+    return;
+  }
+}
+
+void checksAnim(NeoPixelSegment& segment, unsigned long ticks, ChecksState& state) {
+  if(ticks % state.rate != 0) return;
+
+  int len = segment.getLength();
+
+  // Pulse phase for in-progress checks
+  if(state.pulseRising) {
+    state.pulsePhase += 1;
+    if(state.pulsePhase >= 14) {
+      state.pulsePhase = 14;
+      state.pulseRising = false;
+    }
+  } else {
+    state.pulsePhase -= 1;
+    if(state.pulsePhase <= 4) {
+      state.pulsePhase = 4;
+      state.pulseRising = true;
+    }
+  }
+
+  for(int i = 0; i < len; i++) {
+    if(i < state.numChecks) {
+      switch(state.statuses[i]) {
+        case 'S':
+          segment.setPixelColor(i, RgbColor("", 0, 255, 0));
+          segment.setPixelBrightness(i, 12);
+          break;
+        case 'F':
+          segment.setPixelColor(i, RgbColor("", 255, 0, 0));
+          segment.setPixelBrightness(i, 12);
+          break;
+        case 'P':
+          segment.setPixelColor(i, RgbColor("", 255, 200, 0));
+          segment.setPixelBrightness(i, state.pulsePhase);
+          break;
+        case 'Q':
+          segment.setPixelColor(i, RgbColor("", 255, 200, 0));
+          segment.setPixelBrightness(i, 3);
+          break;
+        case 'K':  // skipped
+          segment.setPixelColor(i, RgbColor("", 255, 140, 0));
+          segment.setPixelBrightness(i, 4);
+          break;
+        default:
+          segment.setPixelColor(i, RgbColor("", 255, 255, 255));
+          segment.setPixelBrightness(i, 3);
+          break;
+      }
+    } else {
+      // Remaining LEDs: dim white
+      segment.setPixelColor(i, RgbColor("", 255, 255, 255));
+      segment.setPixelBrightness(i, 3);
+    }
+  }
+  segment.show();
+}
+
 void progress(NeoPixelSegment& segment, unsigned long ticks, ProgressState& state) {
   if(ticks % state.rate == 0) {
     segment.setBrightness(4);

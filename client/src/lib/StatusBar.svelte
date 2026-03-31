@@ -15,43 +15,41 @@
   });
 </script>
 
-<div class="status-bar">
+<div class="status">
   <span class="dot" class:connected class:reconnecting></span>
   <span class="label">
     {#if connected}
-      Arduino Connected
+      Connected
     {:else if reconnecting}
-      Reconnecting...
+      Reconnecting
     {:else}
-      Arduino Disconnected
+      Offline
     {/if}
   </span>
 </div>
 
 <style>
-  .status-bar {
+  .status {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #1a1a2e;
-    border-radius: 8px;
-    margin-bottom: 24px;
+    gap: 6px;
   }
 
   .dot {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: #ff4444;
+    flex-shrink: 0;
   }
 
   .dot.connected {
-    background: #44ff44;
+    background: #4ade80;
+    box-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
   }
 
   .dot.reconnecting {
-    background: #ffaa00;
+    background: #fbbf24;
     animation: blink 1s infinite;
   }
 
@@ -60,7 +58,7 @@
   }
 
   .label {
-    font-size: 14px;
-    color: #ccc;
+    font-size: 12px;
+    color: #666;
   }
 </style>

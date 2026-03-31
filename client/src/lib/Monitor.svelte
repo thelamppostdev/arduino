@@ -53,8 +53,8 @@
   $: leds = Array.from({ length: 12 }, (_, i) => {
     const isCpu = i < cpuLevel;
     const isMem = i < memLevel;
-    let fill = '#1a1a2e';
-    let stroke = '#333';
+    let fill = '#12122a';
+    let stroke = '#1e1e3a';
     let opacity = 0.3;
     if (isCpu && isMem) {
       fill = '#8000FF';
@@ -75,7 +75,7 @@
 
 <div class="monitor">
   <div class="ring-preview">
-    <svg viewBox="0 0 200 200" width="180" height="180">
+    <svg viewBox="0 0 200 200" width="140" height="140">
       {#each leds as led, i}
         {@const angle = (i * 30 - 90) * (Math.PI / 180)}
         {@const cx = 100 + 75 * Math.cos(angle)}
@@ -95,21 +95,21 @@
 
   <div class="stats">
     <div class="stat">
-      <span class="dot" style="background: #FF0000"></span>
-      CPU: {cpu}%
+      <span class="dot" style="background: #FF4444"></span>
+      CPU {cpu}%
     </div>
     <div class="stat">
-      <span class="dot" style="background: #0000FF"></span>
-      Memory: {memory}%
+      <span class="dot" style="background: #4444FF"></span>
+      Mem {memory}%
     </div>
     <div class="stat">
       <span class="dot" style="background: #8000FF"></span>
-      Overlap
+      Both
     </div>
   </div>
 
   <div class="slider-row">
-    <label>Pulse: {pulseSpeed}</label>
+    <label>Pulse <span class="val">{pulseSpeed}</span></label>
     <input type="range" min="10" max="200" bind:value={pulseSpeed}
       on:input={() => send({ type: 'monitor-pulse', speed: pulseSpeed })} />
   </div>
@@ -130,7 +130,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .ring-preview {
@@ -140,69 +140,83 @@
 
   .stats {
     display: flex;
-    gap: 20px;
-    font-size: 14px;
-    color: #ccc;
+    gap: 16px;
+    font-size: 12px;
+    color: #888;
   }
 
   .stat {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
 
   .dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
   }
 
   .controls {
-    display: flex;
-    gap: 12px;
     width: 100%;
   }
 
   .btn {
-    flex: 1;
-    padding: 14px;
-    border: 2px solid #333;
-    border-radius: 12px;
-    background: #1a1a2e;
-    color: #fff;
-    font-size: 14px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #1e1e3a;
+    border-radius: 8px;
+    background: #0a0a14;
+    color: #ccc;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.12s, background 0.12s;
   }
 
   .btn:hover {
-    background: #252545;
+    background: #161630;
   }
 
   .start-btn {
     border-color: #8000FF;
+    color: #a855f7;
   }
 
   .stop-btn {
     border-color: #FF4444;
+    color: #FF6666;
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 
   .slider-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
   }
 
   .slider-row label {
-    width: 80px;
-    font-size: 14px;
+    width: 70px;
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .val {
     color: #ccc;
+    font-variant-numeric: tabular-nums;
   }
 
   .slider-row input[type="range"] {
     flex: 1;
     accent-color: #8000FF;
+    height: 4px;
   }
 </style>
